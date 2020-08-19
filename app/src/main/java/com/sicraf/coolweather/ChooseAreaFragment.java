@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.sicraf.coolweather.db.City;
 import com.sicraf.coolweather.db.County;
 import com.sicraf.coolweather.db.Province;
+import com.sicraf.coolweather.gson.Weather;
 import com.sicraf.coolweather.util.HttpUtil;
 import com.sicraf.coolweather.util.Utility;
 
@@ -89,10 +90,18 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounties();
                 }else if(currentLevel == LEVEL_COUNTY) {
                     String weatherId = countyList.get(i).getWeatherId();
-                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                    intent.putExtra("weather_id", weatherId);
-                    startActivity(intent);
-                    getActivity().finish();
+                    if(getActivity() instanceof  MainActivity) {
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id", weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }else if(getActivity() instanceof WeatherActivity) {
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefreshLayout.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
+
                 }
             }
         });
